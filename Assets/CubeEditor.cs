@@ -4,13 +4,24 @@ using UnityEngine;
 
 [ExecuteInEditMode]
 
-public class EditorSnap : MonoBehaviour
+public class CubeEditor : MonoBehaviour
 {
     [SerializeField] [Range(1f, 20f)] float gridSize = 10f;
     [SerializeField] bool isHeight = false;
+
+    TextMesh textMesh;
+
+
+    private void Start()
+    {
+        
+    }
+
     // Update is called once per frame
     void Update()
     {
+        textMesh = GetComponentInChildren<TextMesh>();
+
         Vector3 snapPos;
         snapPos.x = Mathf.RoundToInt(transform.position.x/ gridSize) * gridSize;
         snapPos.z = Mathf.RoundToInt(transform.position.z / gridSize) * gridSize;
@@ -25,7 +36,7 @@ public class EditorSnap : MonoBehaviour
         }
 
         transform.position = new Vector3(snapPos.x, snapPos.y, snapPos.z);
-
+        textMesh.text = snapPos.x/gridSize + "," + snapPos.z/gridSize;
 
     }
 }
