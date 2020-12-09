@@ -708,8 +708,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4781854b5d16f3e4991ff4656a749f23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: 10
-  isHeight: 1
 --- !u!114 &78054823369903675
 MonoBehaviour:
   m_ObjectHideFlags: 0
