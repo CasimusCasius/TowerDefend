@@ -11,13 +11,7 @@ public class CubeEditor : MonoBehaviour
 
     TextMesh textMesh;
 
-
-    private void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
+    
     void Update()
     {
         textMesh = GetComponentInChildren<TextMesh>();
@@ -36,7 +30,9 @@ public class CubeEditor : MonoBehaviour
         }
 
         transform.position = new Vector3(snapPos.x, snapPos.y, snapPos.z);
-        textMesh.text = snapPos.x/gridSize + "," + snapPos.z/gridSize;
+        string labelText = snapPos.x / gridSize + "," + snapPos.z / gridSize;
+        textMesh.text = labelText;
+        gameObject.name = labelText;
 
     }
 }
