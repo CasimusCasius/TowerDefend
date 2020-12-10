@@ -9,7 +9,7 @@ public class PathFinder : MonoBehaviour
 
     Dictionary<Vector2Int, Waypoint> grid = new Dictionary<Vector2Int, Waypoint>();
     Queue<Waypoint> queue = new Queue<Waypoint>();
-    
+
 
     bool isRunning = true; //todo private
     Vector2Int[] directions =
@@ -21,18 +21,47 @@ public class PathFinder : MonoBehaviour
     };
     Waypoint searchCenter;
 
-    private void Start()
+    List<Waypoint> path = new List<Waypoint>();
+
+    public List<Waypoint> GetPath()
     {
         LoadBlocks();
         ColorStartAndEnd();
-        PathFind();
+        BreadthFirstSearch();
+        CreatePath();
+        return path;
+    }
+    private void LoadBlocks()
+    {
+        var waypoints = FindObjectsOfType<Waypoint>();
+        foreach (Waypoint waypoint in waypoints)
+        {
+            var gridPos = waypoint.GetGridPos();
+            if (!grid.ContainsKey(gridPos))
+            {
+                grid.Add(gridPos, waypoint);
+                waypoint.SetTopColor(Color.gray);
+            }
+            else
+            {
+                Debug.LogWarning("I have that block :" + waypoint.name);
+            }
+
+        }
+        startPoint.SetTopColor(Color.green);
+    }
+    private void ColorStartAndEnd()
+    {
+        endPoint.SetTopColor(Color.red);
+        print("Loaded blocks: " + grid.Count);
     }
 
-    private void PathFind()
+
+    private void BreadthFirstSearch()
     {
         queue.Enqueue(startPoint);
 
-        while (queue.Count>0 && isRunning)
+        while (queue.Count > 0 && isRunning)
         {
             searchCenter = queue.Dequeue();
             searchCenter.isExplored = true;
@@ -54,7 +83,7 @@ public class PathFinder : MonoBehaviour
     private void ExploreNeighbours()
     {
         if (!isRunning) { return; }
-        foreach(Vector2Int direction in directions)
+        foreach (Vector2Int direction in directions)
         {
             Vector2Int neighbourCoordninates = searchCenter.GetGridPos() + direction;
             QueueNewNeighbour(neighbourCoordninates);
@@ -76,30 +105,18 @@ public class PathFinder : MonoBehaviour
         grid[neighbourCoordninates].isExplored = true;
     }
 
-    private void LoadBlocks()
+    private void CreatePath()
     {
-        var waypoints = FindObjectsOfType<Waypoint>();
-        foreach (Waypoint waypoint in waypoints)
+        path.Add(endPoint);
+        Waypoint previous = endPoint.exploredFrom;
+        while (previous != startPoint)
         {
-            var gridPos = waypoint.GetGridPos();
-            if (!grid.ContainsKey(gridPos))
-            {
-                grid.Add(gridPos, waypoint);
-                waypoint.SetTopColor(Color.gray);
-            }
-            else
-            {
-                Debug.LogWarning("I have that block :" + waypoint.name);
-            }
-
+            path.Add(previous);
+            previous = previous.exploredFrom;
         }
-        startPoint.SetTopColor(Color.green);
-       
+        path.Add(startPoint);
+        path.Reverse();
     }
 
-    private void ColorStartAndEnd()
-    {
-        endPoint.SetTopColor(Color.red);
-        print("Loaded blocks: " + grid.Count);
-    }
+
 }
