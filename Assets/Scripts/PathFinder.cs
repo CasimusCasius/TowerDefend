@@ -6,8 +6,10 @@ using UnityEngine;
 public class PathFinder : MonoBehaviour
 {
     Dictionary<Vector2Int, Waypoint> grid = new Dictionary<Vector2Int, Waypoint>();
+    Queue<Waypoint> queue = new Queue<Waypoint>();
     [SerializeField] Waypoint startPoint, endPoint;
 
+    [SerializeField]bool isRunning = true; //todo private
     Vector2Int[] directions =
     {
         Vector2Int.up,
@@ -19,7 +21,34 @@ public class PathFinder : MonoBehaviour
     {
         LoadBlocks();
         ColorStartAndEnd();
-        ExploreNeighbours();
+        PathFind();
+
+
+        // ExploreNeighbours();
+    }
+
+    private void PathFind()
+    {
+        queue.Enqueue(startPoint);
+
+        while (queue.Count>0 && isRunning)
+        {
+            var searchCenter = queue.Dequeue();
+            print(searchCenter);
+            HaltIfEndFound(searchCenter);
+        }
+
+
+    }
+
+    private void HaltIfEndFound(Waypoint searchCenter)
+    {
+        if (searchCenter.GetGridPos() == endPoint.GetGridPos())
+        {
+            print("I found endPoint");
+            isRunning = false;
+
+        }
     }
 
     private void ExploreNeighbours()
