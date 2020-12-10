@@ -5,26 +5,27 @@ using UnityEngine;
 
 public class PathFinder : MonoBehaviour
 {
-    Dictionary<Vector2Int, Waypoint> grid = new Dictionary<Vector2Int, Waypoint>();
-    Queue<Waypoint> queue = new Queue<Waypoint>();
     [SerializeField] Waypoint startPoint, endPoint;
 
-    [SerializeField]bool isRunning = true; //todo private
+    Dictionary<Vector2Int, Waypoint> grid = new Dictionary<Vector2Int, Waypoint>();
+    Queue<Waypoint> queue = new Queue<Waypoint>();
+    
+
+    bool isRunning = true; //todo private
     Vector2Int[] directions =
     {
         Vector2Int.up,
-        Vector2Int.down,
         Vector2Int.left,
+        Vector2Int.down,
         Vector2Int.right
     };
+    Waypoint searchCenter;
+
     private void Start()
     {
         LoadBlocks();
         ColorStartAndEnd();
         PathFind();
-
-
-        // ExploreNeighbours();
     }
 
     private void PathFind()
@@ -33,34 +34,46 @@ public class PathFinder : MonoBehaviour
 
         while (queue.Count>0 && isRunning)
         {
-            var searchCenter = queue.Dequeue();
-            print(searchCenter);
-            HaltIfEndFound(searchCenter);
+            searchCenter = queue.Dequeue();
+            searchCenter.isExplored = true;
+            HaltIfEndFound();
+            ExploreNeighbours();
         }
 
-
+        print("is that all?");
     }
 
-    private void HaltIfEndFound(Waypoint searchCenter)
+    private void HaltIfEndFound()
     {
-        if (searchCenter.GetGridPos() == endPoint.GetGridPos())
+        if (searchCenter == endPoint)
         {
-            print("I found endPoint");
             isRunning = false;
-
         }
     }
 
     private void ExploreNeighbours()
     {
+        if (!isRunning) { return; }
         foreach(Vector2Int direction in directions)
         {
-            Vector2Int explore=startPoint.GetGridPos()+direction;
-            if (grid.ContainsKey(explore))
-            {
-                print("exploring: " + explore);
-            }
+            Vector2Int neighbourCoordninates = searchCenter.GetGridPos() + direction;
+            QueueNewNeighbour(neighbourCoordninates);
         }
+    }
+
+    private void QueueNewNeighbour(Vector2Int neighbourCoordninates)
+    {
+        if (grid.ContainsKey(neighbourCoordninates) && !grid[neighbourCoordninates].isExplored)
+        {
+            queue.Enqueue(grid[neighbourCoordninates]);
+            UpdateWaypointData(neighbourCoordninates);
+        }
+    }
+
+    private void UpdateWaypointData(Vector2Int neighbourCoordninates)
+    {
+        grid[neighbourCoordninates].exploredFrom = searchCenter;
+        grid[neighbourCoordninates].isExplored = true;
     }
 
     private void LoadBlocks()
