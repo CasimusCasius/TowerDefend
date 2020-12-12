@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
-    
+    bool isAlive = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +18,9 @@ public class EnemyMovement : MonoBehaviour
         print("Starting patrol...");
         foreach (Waypoint waypoint in path)
         {
-            transform.position = waypoint.transform.position;
+            if (isAlive) {
+                transform.position = waypoint.transform.position;
+            }
             yield return new WaitForSeconds(1f);
         }
         print("Ending patrol...");
@@ -28,5 +30,9 @@ public class EnemyMovement : MonoBehaviour
     void Update()
     {
         
+    }
+    void Death()
+    {
+        isAlive = false;
     }
 }

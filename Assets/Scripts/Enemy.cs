@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] int hitpoints = 10;
+    [SerializeField] GameObject deathFX;
+
 
     private void Start()
     {
@@ -19,7 +22,17 @@ public class Enemy : MonoBehaviour
     }
     private void OnParticleCollision(GameObject other)
     {
+        TakeDamage();
+    }
 
-        print("Im shot");
+    private void TakeDamage()
+    {
+        hitpoints--;
+        if (hitpoints < 1)
+        {
+            deathFX.SetActive(true);
+            SendMessage("Death");
+            Destroy(gameObject,1f);
+        }
     }
 }

@@ -11,7 +11,7 @@ public class PathFinder : MonoBehaviour
     Queue<Waypoint> queue = new Queue<Waypoint>();
 
 
-    bool isRunning = true; //todo private
+    bool isRunning = true; 
     Vector2Int[] directions =
     {
         Vector2Int.up,
